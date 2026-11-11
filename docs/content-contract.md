@@ -2,6 +2,8 @@
 
 The template and local editor use a file-backed schema. JSON files are UTF-8 JSON; articles are Markdown files with YAML-style frontmatter whose scalar values are JSON literals. Keep each article filename equal to its `slug`.
 
+For production bootstrap and deployment setup, start with [Getting started](getting-started.md).
+
 ## Repository manifest
 
 `portfolio.repo.json` identifies the repository role:

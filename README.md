@@ -44,7 +44,7 @@ The file contract is versioned independently of the app:
 
 The repository contains one **published example article** because Next.js static export needs at least one parameter for its dynamic article and article-image routes. Replace it or change it to a draft before deploying your production instance. Projects and achievements may start empty.
 
-See [docs/content-contract.md](docs/content-contract.md) for field formats.
+Start with [docs/getting-started.md](docs/getting-started.md), then use [docs/content-contract.md](docs/content-contract.md) for field formats.
 
 ## Create a production instance
 
@@ -66,6 +66,12 @@ The template's GitHub Actions workflow is CI-only: it validates and builds but d
 ## Migration policy
 
 When migrating from an existing CMS, prefer an authorized database/export snapshot over scraping the public site. Preserve public entity metadata and media references; exclude private messages, access logs, sessions, credentials and secrets. Always preview field mappings and conflicts before writing into a production instance. The migration adapter plan currently lives in the editor repository.
+
+## Documentation
+
+- [Getting started and production bootstrap](docs/getting-started.md)
+- [Content contract v1](docs/content-contract.md)
+- [Workspace operations](../docs/WORKSPACE-GUIDE.md)
 
 ## Design
 
