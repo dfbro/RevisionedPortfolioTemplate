@@ -1,0 +1,25 @@
+{
+  "displayName": "Your Name",
+  "alias": "Your Alias",
+  "brand": "Your Brand",
+  "email": null,
+  "websiteUrl": "https://example.com",
+  "githubUrl": null,
+  "instagramUrl": null,
+  "profileImageUrl": "/profile.svg",
+  "aboutText": "Write a concise introduction about who you are, what you work on, and the problems you enjoy solving.",
+  "philosophyText": "Add a personal quote or guiding principle.",
+  "skills": [],
+  "journey": [],
+  "education": [],
+  "seo": {
+    "jobTitle": "Developer",
+    "description": "A personal portfolio featuring selected work, projects, and experience.",
+    "siteName": "Your Name — Portfolio",
+    "defaultTitle": "Your Name — Portfolio",
+    "titleTemplate": "%s — Your Name",
+    "keywords": [],
+    "sameAs": [],
+    "locale": "en_US"
+  }
+}

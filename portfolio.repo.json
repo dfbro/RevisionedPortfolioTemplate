@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "role": "template",
+  "templateName": "ElaangPortfolioTemplate",
+  "templateVersion": "1.0.0",
+  "contractVersion": 1,
+  "description": "Reusable static portfolio base. Copy this repository to create a new production instance."
+}
