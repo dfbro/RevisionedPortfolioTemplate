@@ -1,4 +1,4 @@
-# ElaangPortfolioTemplate
+# RevisionedPortfolioTemplate
 
 Reusable static portfolio base for a personal site. This repository contains presentation code, build tooling, content schemas and safe placeholder data. It is not the maintained website for any individual.
 
