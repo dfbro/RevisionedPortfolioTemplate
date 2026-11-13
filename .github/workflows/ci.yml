@@ -46,3 +46,9 @@ jobs:
 
       - name: Verify generated files
         run: pnpm verify:output
+
+      - name: Install Playwright browser
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: End-to-end tests
+        run: pnpm e2e

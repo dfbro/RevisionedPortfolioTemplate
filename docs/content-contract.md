@@ -20,7 +20,7 @@ The editor treats the template as read-only. The configured content repository m
 
 `content/site.json` contains `schemaVersion`, `url` (absolute HTTP(S) URL), `title`, `description`, `language` and `trailingSlash`.
 
-`content/profile.json` contains `displayName`, `alias`, `brand`, nullable `email`, `websiteUrl`, `githubUrl`, `instagramUrl`, `profileImageUrl`, `aboutText`, `philosophyText`, `skills[]`, `journey[]`, `education[]` and `seo`.
+`content/profile.json` contains `displayName`, `alias`, `brand`, nullable `email`, `websiteUrl`, `githubUrl`, optional `githubActivityUsername`, `instagramUrl`, `profileImageUrl`, `aboutText`, `philosophyText`, `skills[]`, `journey[]`, `education[]` and `seo`. Set `githubActivityUsername` when the account used for contribution snapshots differs from the account in `githubUrl`; leave it `null` to derive the login from the GitHub profile URL.
 
 Skills use `{name, level}`, where level is 0–100. Journey items use `{role, company, period, desc}`. Education items use `{level, school, period}`. SEO settings include job title, title/description, locale, keywords and same-as URLs.
 

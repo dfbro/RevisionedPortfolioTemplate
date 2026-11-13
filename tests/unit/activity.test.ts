@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildCalendar, countByDay, githubUser, parseGithubContributions } from "@/lib/activity";
+import { buildCalendar, countByDay, githubUser, normalizeGithubUsername, parseGithubContributions, resolveGithubActivityUsername } from "@/lib/activity";
 
 describe("parseGithubContributions", () => {
   it("reads day counts from the cells' tooltips", () => {
@@ -21,8 +21,23 @@ describe("githubUser", () => {
   it("takes the login from a profile URL", () => {
     expect(githubUser("https://github.com/example-user")).toBe("example-user");
     expect(githubUser("https://github.com/example-user/")).toBe("example-user");
+    expect(githubUser("https://github.com/example-user/example-repo")).toBe("example-user");
     expect(githubUser("https://example.com/x")).toBeNull();
+    expect(githubUser("https://github.com.evil.example/example-user")).toBeNull();
     expect(githubUser(null)).toBeNull();
+  });
+});
+
+describe("GitHub activity username", () => {
+  it("validates explicit logins and overrides the social profile owner", () => {
+    expect(normalizeGithubUsername(" Claritys11 ")).toBe("Claritys11");
+    expect(normalizeGithubUsername("bad/name")).toBeNull();
+    expect(normalizeGithubUsername("settings")).toBeNull();
+    expect(resolveGithubActivityUsername("Claritys11", "https://github.com/other-user")).toBe("Claritys11");
+  });
+
+  it("falls back to the GitHub profile URL when no explicit login is set", () => {
+    expect(resolveGithubActivityUsername(null, "https://github.com/example-user")).toBe("example-user");
   });
 });
 

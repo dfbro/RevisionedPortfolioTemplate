@@ -5,6 +5,7 @@
   "email": null,
   "websiteUrl": "https://example.com",
   "githubUrl": null,
+  "githubActivityUsername": null,
   "instagramUrl": null,
   "profileImageUrl": "/profile.svg",
   "aboutText": "Write a concise introduction about who you are, what you work on, and the problems you enjoy solving.",
