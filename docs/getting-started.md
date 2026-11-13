@@ -28,7 +28,7 @@ The static preview server binds to `127.0.0.1:3100`.
 2. Keep the template repository unchanged.
 3. Edit `portfolio.repo.json`: set `role` to `production`, choose an `instanceName`, keep `templateName: RevisionedPortfolioTemplate`, and pin `templateContractVersion: 1`.
 4. Edit `content/site.json` with the new absolute canonical site URL, title, description, language and trailing-slash policy.
-5. Edit `content/profile.json` with the owner's display name, alias, brand, contact details, biography, links, skills, journey, education and SEO settings. Set `githubActivityUsername` if the GitHub contribution heatmap should use a different login from `githubUrl`.
+5. Edit `content/profile.json` with the owner's display name, alias, brand, contact details, biography, links, skills, journey, education and SEO settings. Set `heroNameLines` to one name group per visible line if the default first-name/remainder split is not suitable; each word is kept intact when the layout wraps. Set `githubActivityUsername` if the GitHub contribution heatmap should use a different login from `githubUrl`.
 6. Edit `content/appearance.json` to configure fonts, theme, colors and radius.
 7. Replace `public/profile.svg` with a suitable profile image and update `profileImageUrl`.
 8. Add projects to `content/projects.json`, achievements to `content/achievements.json`, and Markdown articles under `content/writeups/`.
