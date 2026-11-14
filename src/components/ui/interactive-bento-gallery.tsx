@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { getLenis } from "@/components/motion/smooth-scroll";
+import { DeferredImage } from "@/components/site/deferred-image";
 import { cn } from "@/lib/utils";
 
 // MediaItemType defines the structure of a media item
@@ -20,7 +21,7 @@ export interface MediaItemType {
 }
 
 // MediaItem renders either a video or an image based on item.type
-const MediaItem = ({ item, className, onClick }: { item: MediaItemType; className?: string; onClick?: () => void }) => {
+const MediaItem = ({ item, className, onClick, defer = true }: { item: MediaItemType; className?: string; onClick?: () => void; defer?: boolean }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isInView, setIsInView] = useState(false);
   const [isBuffering, setIsBuffering] = useState(true);
@@ -79,10 +80,7 @@ const MediaItem = ({ item, className, onClick }: { item: MediaItemType; classNam
     );
   }
 
-  return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img src={item.url} alt={item.title} className={cn(className, "cursor-pointer object-cover")} onClick={onClick} loading="lazy" decoding="async" draggable={false} />
-  );
+  return <DeferredImage src={item.url} alt={item.title} className={cn(className, "cursor-pointer object-cover")} onClick={onClick} eager={!defer} draggable={false} />;
 };
 
 // GalleryModal displays the selected item full-size with a draggable thumbnail dock
@@ -143,7 +141,7 @@ export const GalleryModal = ({ selectedItem, onClose, setSelectedItem, mediaItem
                 exit={{ y: 20, scale: 0.97, opacity: 0, transition: { duration: 0.15 } }}
                 onClick={(e) => e.stopPropagation()}
               >
-                <MediaItem item={selectedItem} className="max-h-[78vh] w-full object-contain" />
+                <MediaItem item={selectedItem} className="max-h-[78vh] w-full object-contain" defer={false} />
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 to-transparent p-3 md:p-5">
                   <h3 className="font-display text-base font-semibold text-white sm:text-lg md:text-xl">{selectedItem.title}</h3>
                   {selectedItem.desc && <p className="mt-1 font-mono text-[11px] tracking-[0.14em] text-white/70 uppercase">{selectedItem.desc}</p>}
