@@ -8,6 +8,43 @@ test("template home renders placeholders without horizontal overflow", async ({ 
   expect(overflow).toBeLessThanOrEqual(0);
 });
 
+test("template SplitHeading masks preserve descenders and project action rows remain spaced", async ({ page }, info) => {
+  test.skip(info.project.name === "reduced-motion", "SplitText masks are disabled when motion is reduced");
+  await page.setViewportSize({ width: info.project.name === "mobile" ? 370 : 1440, height: 900 });
+
+  for (const sample of [
+    { route: "/projects", glyph: "j" },
+    { route: "/writeups", glyph: "p" },
+  ]) {
+    await page.goto(sample.route);
+    const heading = page.locator("main h1.split-heading");
+    await expect(heading).toBeVisible();
+    const mask = heading.locator(".split-heading-char-mask").filter({ hasText: new RegExp(`^${sample.glyph}$`, "i") });
+    await expect.poll(() => mask.count()).toBe(1);
+    const dimensions = await mask.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return {
+        paddingBottom: Number.parseFloat(style.paddingBottom),
+        marginBottom: Number.parseFloat(style.marginBottom),
+        overflow: style.overflow,
+        height: element.getBoundingClientRect().height,
+        fontSize: Number.parseFloat(getComputedStyle(element.parentElement!).fontSize),
+      };
+    });
+    expect(dimensions.overflow).toBe("clip");
+    expect(dimensions.paddingBottom).toBeGreaterThan(0);
+    expect(dimensions.marginBottom).toBeLessThan(0);
+    expect(dimensions.height).toBeGreaterThanOrEqual(dimensions.fontSize - 1);
+  }
+
+  await page.goto("/projects");
+  const actionRows = page.locator("[data-project-actions]");
+  if (await actionRows.count()) {
+    const gap = await actionRows.first().evaluate((element) => Number.parseFloat(getComputedStyle(element).columnGap));
+    expect(gap).toBeGreaterThanOrEqual(16);
+  }
+});
+
 test("mobile navigation is an opaque full-screen overlay and closes with Escape", async ({ page }, info) => {
   test.skip(info.project.name !== "mobile", "mobile menu only exists below the desktop breakpoint");
   await page.setViewportSize({ width: 370, height: 897 });
