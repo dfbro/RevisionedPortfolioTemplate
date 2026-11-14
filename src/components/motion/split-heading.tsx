@@ -5,9 +5,9 @@ import { useRef } from "react";
 import { onIntroDone } from "@/lib/intro";
 import { gsap, NO_REDUCED, SplitText } from "@/lib/motion";
 
-type Props = { text: string; as?: "h1" | "h2" | "p" | "span"; className?: string; delay?: number; onScroll?: boolean; waitIntro?: boolean };
+type Props = { text: string; as?: "h1" | "h2" | "p" | "span"; className?: string; delay?: number; onScroll?: boolean; waitIntro?: boolean; keepWordsTogether?: boolean };
 
-export function SplitHeading({ text, as: Tag = "h2", className, delay = 0, onScroll = false, waitIntro = false }: Props) {
+export function SplitHeading({ text, as: Tag = "h2", className, delay = 0, onScroll = false, waitIntro = false, keepWordsTogether = false }: Props) {
   const ref = useRef<HTMLHeadingElement>(null);
   useGSAP(
     () => {
@@ -17,7 +17,8 @@ export function SplitHeading({ text, as: Tag = "h2", className, delay = 0, onScr
         let ready = !waitIntro;
         const tweens: gsap.core.Tween[] = [];
         const split = SplitText.create(ref.current!, {
-          type: "chars,words",
+          type: keepWordsTogether ? "chars" : "chars,words",
+          smartWrap: keepWordsTogether,
           mask: "chars",
           autoSplit: true,
           onSplit: (self) => {
