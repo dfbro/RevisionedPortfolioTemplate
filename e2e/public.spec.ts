@@ -8,6 +8,34 @@ test("template home renders placeholders without horizontal overflow", async ({ 
   expect(overflow).toBeLessThanOrEqual(0);
 });
 
+test("mobile navigation is an opaque full-screen overlay and closes with Escape", async ({ page }, info) => {
+  test.skip(info.project.name !== "mobile", "mobile menu only exists below the desktop breakpoint");
+  await page.goto("/");
+
+  const trigger = page.getByRole("button", { name: "Open navigation menu" });
+  await trigger.click();
+  const menu = page.getByRole("navigation", { name: "Mobile navigation" });
+  await expect(menu).toBeVisible();
+  await expect(page.getByRole("button", { name: "Close navigation menu" })).toHaveAttribute("aria-expanded", "true");
+
+  const overlay = await page.locator("header").first().evaluate((header) => ({
+    height: header.getBoundingClientRect().height,
+    viewportHeight: window.innerHeight,
+    background: getComputedStyle(header).backgroundColor,
+    blend: getComputedStyle(header).mixBlendMode,
+    scrollLock: document.documentElement.style.overflow,
+  }));
+  expect(overlay.height).toBeGreaterThanOrEqual(overlay.viewportHeight - 1);
+  expect(overlay.background).not.toBe("rgba(0, 0, 0, 0)");
+  expect(overlay.blend).toBe("normal");
+  expect(overlay.scrollLock).toBe("hidden");
+
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("button", { name: "Open navigation menu" })).toHaveAttribute("aria-expanded", "false");
+  await expect(menu).toBeHidden();
+  expect(await page.evaluate(() => document.documentElement.style.overflow)).toBe("");
+});
+
 test("template places the activity heatmap after the record and before the closing quote", async ({ page }) => {
   await page.goto("/");
   // ActivitySection is streamed through Suspense; wait for both streamed siblings before comparing DOM order.
@@ -30,6 +58,23 @@ test("template places the activity heatmap after the record and before the closi
   });
   expect(order.recordBeforeActivity).toBe(true);
   expect(order.activityBeforeQuote).toBe(true);
+});
+
+test("template preloads the about portrait before its section enters the viewport", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  const image = page.locator(".about-photo img");
+  await expect(image).toHaveCount(1);
+
+  const absoluteTop = await image.evaluate((node) => node.getBoundingClientRect().top + window.scrollY);
+  const viewportHeight = await page.evaluate(() => window.innerHeight);
+  await page.evaluate((top) => window.scrollTo({ top, behavior: "instant" }), Math.max(0, absoluteTop - viewportHeight - 250));
+  const beforeViewport = await image.evaluate((node) => ({ top: node.getBoundingClientRect().top, viewportHeight: window.innerHeight }));
+  expect(beforeViewport.top).toBeGreaterThan(beforeViewport.viewportHeight);
+  await expect(image).toHaveAttribute("src", /profile\.svg/);
+  await expect.poll(() => image.evaluate((node) => (node as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+  const afterLoad = await image.evaluate((node) => ({ top: node.getBoundingClientRect().top, viewportHeight: window.innerHeight }));
+  expect(afterLoad.top).toBeGreaterThan(afterLoad.viewportHeight);
 });
 
 test("first visit to home opens behind the preloader, which then lifts", async ({ page }, info) => {

@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { DeferredImage } from "@/components/site/deferred-image";
 
 type Props = { src: string | null; alt: string; className?: string; label?: string; eager?: boolean };
 
@@ -10,7 +11,6 @@ export function Media({ src, alt, className, label, eager }: Props) {
       </div>
     );
   }
-  // Plain <img>: sources include data: URLs and the uploads API route, which next/image can't optimise uniformly.
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img src={src} alt={alt} className={cn("object-cover", className)} loading={eager ? "eager" : "lazy"} decoding="async" />;
+  // Keep plain <img> sources for uploads and data URLs, but request them before they enter the viewport.
+  return <DeferredImage src={src} alt={alt} className={cn("object-cover", className)} eager={eager} />;
 }
