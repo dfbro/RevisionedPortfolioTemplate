@@ -10,9 +10,14 @@ test("template home renders placeholders without horizontal overflow", async ({ 
 
 test("mobile navigation is an opaque full-screen overlay and closes with Escape", async ({ page }, info) => {
   test.skip(info.project.name !== "mobile", "mobile menu only exists below the desktop breakpoint");
+  await page.setViewportSize({ width: 370, height: 897 });
   await page.goto("/");
 
   const trigger = page.getByRole("button", { name: "Open navigation menu" });
+  const triggerBounds = await trigger.boundingBox();
+  expect(triggerBounds).not.toBeNull();
+  expect(triggerBounds!.x + triggerBounds!.width).toBeLessThanOrEqual(358);
+  expect(await trigger.evaluate((node) => node.scrollWidth <= node.clientWidth)).toBe(true);
   await trigger.click();
   const menu = page.getByRole("navigation", { name: "Mobile navigation" });
   const header = page.locator("header").first();
