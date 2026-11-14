@@ -10,6 +10,12 @@ test("template home renders placeholders without horizontal overflow", async ({ 
 
 test("template places the activity heatmap after the record and before the closing quote", async ({ page }) => {
   await page.goto("/");
+  // ActivitySection is streamed through Suspense; wait for both streamed siblings before comparing DOM order.
+  const activitySection = page.locator("main > section:has(.hm-card)");
+  const closingQuote = page.locator("main > blockquote");
+  await expect(activitySection).toHaveCount(1, { timeout: 10000 });
+  await expect(closingQuote).toHaveCount(1, { timeout: 10000 });
+
   const order = await page.locator("main").evaluate((main) => {
     const children = Array.from(main.children);
     const activity = main.querySelector(":scope > section:has(.hm-card)");
