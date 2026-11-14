@@ -8,6 +8,24 @@ test("template home renders placeholders without horizontal overflow", async ({ 
   expect(overflow).toBeLessThanOrEqual(0);
 });
 
+test("template places the activity heatmap after the record and before the closing quote", async ({ page }) => {
+  await page.goto("/");
+  const order = await page.locator("main").evaluate((main) => {
+    const children = Array.from(main.children);
+    const activity = main.querySelector(":scope > section:has(.hm-card)");
+    const quote = main.querySelector(":scope > blockquote");
+    const record = Array.from(main.querySelectorAll(":scope > section")).find((section) =>
+      section.querySelector(":scope > div .meta")?.textContent?.toLowerCase().includes("record"),
+    );
+    return {
+      recordBeforeActivity: Boolean(record && activity && children.indexOf(record) < children.indexOf(activity)),
+      activityBeforeQuote: Boolean(activity && quote && children.indexOf(activity) < children.indexOf(quote)),
+    };
+  });
+  expect(order.recordBeforeActivity).toBe(true);
+  expect(order.activityBeforeQuote).toBe(true);
+});
+
 test("first visit to home opens behind the preloader, which then lifts", async ({ page }, info) => {
   test.skip(info.project.name === "reduced-motion", "no preloader when motion is reduced");
   await page.goto("/");
