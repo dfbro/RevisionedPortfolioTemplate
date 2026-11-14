@@ -18,6 +18,7 @@ export function SplitHeading({ text, as: Tag = "h2", className, delay = 0, onScr
         const tweens: gsap.core.Tween[] = [];
         const split = SplitText.create(ref.current!, {
           type: keepWordsTogether ? "chars" : "chars,words",
+          charsClass: "split-heading-char",
           smartWrap: keepWordsTogether,
           mask: "chars",
           autoSplit: true,
@@ -51,7 +52,7 @@ export function SplitHeading({ text, as: Tag = "h2", className, delay = 0, onScr
     { scope: ref },
   );
   return (
-    <Tag ref={ref} className={className}>
+    <Tag ref={ref} className={`split-heading ${className ?? ""}`}>
       {text}
     </Tag>
   );

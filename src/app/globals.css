@@ -112,6 +112,12 @@ html.lenis body {
   @apply font-mono text-[11px] tracking-[0.14em] text-muted-foreground uppercase;
 }
 
+/* Keep descenders inside SplitText's per-character reveal masks. */
+.split-heading .split-heading-char-mask {
+  padding-bottom: 0.2em;
+  margin-bottom: -0.2em;
+}
+
 /* Shiki dual theme */
 .shiki,
 .shiki span {
