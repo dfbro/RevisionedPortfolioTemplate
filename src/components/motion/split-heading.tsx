@@ -23,6 +23,13 @@ export function SplitHeading({ text, as: Tag = "h2", className, delay = 0, onScr
           mask: "chars",
           autoSplit: true,
           onSplit: (self) => {
+            // SplitText applies overflow: clip on both axes; keep the vertical reveal mask
+            // while allowing glyph side bearings to extend past each character's advance box.
+            self.masks.forEach((mask) => {
+              const maskElement = mask as HTMLElement;
+              maskElement.style.overflowX = "visible";
+              maskElement.style.overflowY = "clip";
+            });
             const tw = gsap.from(self.chars, {
               yPercent: 110,
               duration: 1.1,

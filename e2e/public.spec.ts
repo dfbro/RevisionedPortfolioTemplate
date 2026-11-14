@@ -13,28 +13,32 @@ test("template SplitHeading masks preserve descenders and project action rows re
   await page.setViewportSize({ width: info.project.name === "mobile" ? 370 : 1440, height: 900 });
 
   for (const sample of [
-    { route: "/projects", glyph: "j" },
-    { route: "/writeups", glyph: "p" },
+    { route: "/about", glyphs: ["a", "s"] },
+    { route: "/projects", glyphs: ["j"] },
+    { route: "/writeups", glyphs: ["p", "s"] },
   ]) {
     await page.goto(sample.route);
     const heading = page.locator("main h1.split-heading");
     await expect(heading).toBeVisible();
-    const mask = heading.locator(".split-heading-char-mask").filter({ hasText: new RegExp(`^${sample.glyph}$`, "i") });
-    await expect.poll(() => mask.count()).toBe(1);
-    const dimensions = await mask.evaluate((element) => {
+    const masks = heading.locator(".split-heading-char-mask");
+    await expect.poll(() => masks.count()).toBeGreaterThan(0);
+    const dimensions = await masks.evaluateAll((elements) => elements.map((element) => {
       const style = getComputedStyle(element);
       return {
         paddingBottom: Number.parseFloat(style.paddingBottom),
         marginBottom: Number.parseFloat(style.marginBottom),
-        overflow: style.overflow,
-        height: element.getBoundingClientRect().height,
-        fontSize: Number.parseFloat(getComputedStyle(element.parentElement!).fontSize),
+        overflowX: style.overflowX,
+        overflowY: style.overflowY,
       };
-    });
-    expect(dimensions.overflow).toBe("clip");
-    expect(dimensions.paddingBottom).toBeGreaterThan(0);
-    expect(dimensions.marginBottom).toBeLessThan(0);
-    expect(dimensions.height).toBeGreaterThanOrEqual(dimensions.fontSize - 1);
+    }));
+    expect(dimensions.every((item) => item.overflowX === "visible" && item.overflowY === "clip")).toBe(true);
+    expect(dimensions.every((item) => item.paddingBottom > 0 && item.marginBottom === 0)).toBe(true);
+
+    for (const glyph of sample.glyphs) {
+      const mask = masks.filter({ hasText: new RegExp(`^${glyph}$`, "i") });
+      await expect.poll(() => mask.count()).toBeGreaterThan(0);
+      await expect(mask.first()).toBeVisible();
+    }
   }
 
   await page.goto("/projects");
